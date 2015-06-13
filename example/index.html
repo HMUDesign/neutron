@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Electron Test</title>
+		
+		<script>
+			var neutron = require('neutron');
+			
+			neutron.on('ping', function() {
+				console.log('neutron', 'ping');
+				
+				neutron.send('main', 'pong');
+			});
+			
+			neutron.on('pong', function() {
+				console.log('neutron', 'pong');
+			});
+		</script>
+		
+		<script>
+			window.onload = function() {
+				var webview = require('neutron/webview')(document.getElementById('webview'));
+				
+				webview.on('pong', function() {
+					console.log('webview', 'pong');
+				});
+				
+				webview.on('dom-ready', function() {
+					webview.element.openDevTools();
+					
+					webview.send('ping');
+				});
+			}
+		</script>
+	</head>
+	<body>
+		<webview id="webview" src="app/webview.html" preload="./node_modules/neutron/webview-preload.js" />
+	</body>
+</html>
